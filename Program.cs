@@ -10,6 +10,10 @@ namespace dev275x.studentlist
         {
            
             /* Check arguments */
+			if(args.Length == null || args.Length != 1)
+			{
+				Console.WriteLine("ERROR");
+			}
             if (args[0] == "a") 
 			{
                 Console.WriteLine("Loading data ...");
