@@ -17,11 +17,11 @@ namespace dev275x.studentlist
             if (args[0] == "a") 
 			{
                 Console.WriteLine("Loading data ...");
-                var s = new FileStream("students.txt",FileMode.Open);
-                var r = new StreamReader(s);
-                var D = r.ReadToEnd(); 
-				var i = D.Split(',');
-                foreach(var j in i) 
+                var fileStream = new FileStream("students.txt",FileMode.Open);
+                var reader = new StreamReader(fileStream);
+                var fileContents = reader.ReadToEnd(); 
+				var words = fileContents.Split(',');
+                foreach(var j in words) 
 				{
 					Console.WriteLine(j);
 				}
