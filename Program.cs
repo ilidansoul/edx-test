@@ -13,95 +13,100 @@ namespace dev275x.studentlist
 			if(args.Length == null || args.Length != 1)
 			{
 				Console.WriteLine("ERROR");
+				return;
 			}
+			var fileContents = LoadData(Constants.StudentList);
             if (args[0] == "a") 
 			{
-                Console.WriteLine("Loading data ...");
-                var fileStream = new FileStream("students.txt",FileMode.Open);
-                var reader = new StreamReader(fileStream);
-                var fileContents = reader.ReadToEnd(); 
 				var words = fileContents.Split(',');
                 foreach(var j in words) 
 				{
 					Console.WriteLine(j);
 				}
-                Console.WriteLine("Data loaded");
+              
             }
-            else if (args[0]== "r")
+            else if (args[0]== Constants.ShowRandom)
             {
                 Console.WriteLine("Loading data ...");
 				
                 // We are loading data
-                var s = new FileStream("students.txt",FileMode.Open);
-                var r = new StreamReader(s);
-                var d = r.ReadToEnd();
-                var i = d.Split(',');
-                var x = new Random();
-                var y = x.Next(0,i.Length);
-                Console.WriteLine(i[y]);
-                Console.WriteLine("Data loaded");
+             
+                var words = fileContents.Split(',');
+                var randomWord = new Random();
+                var y = randomWord.Next(0,words.Length);
+                Console.WriteLine(words[y]);
+             
             }
 
-            else if (args[0].Contains("+"))
+            else if (args[0].Contains(Constants.AddEntry))
             {
 				
                 // read
                 Console.WriteLine("Loading data ...");
-                var s = new FileStream("students.txt",FileMode.Open);
-                var r = new StreamWriter(s);
-                var t = args[0].Substring(1);
-                var g = new StreamReader(s);
-                var d = g.ReadToEnd();
-                s.Seek(0,SeekOrigin.Begin);
+            
+                var rr = args[0].Substring(1);
+            
 				
                 // Write
-                // But we're in trouble if there are ever duplicates entered
-                r.WriteLine(d.Replace('\n',' ') + "," + t);
-                var now = DateTime.Now;
-                r.WriteLine(String.Format("List last updated on {0}", now));
-                r.Flush();
-                Console.WriteLine("Data loaded");
+          
             }
-            else if (args[0].Contains("?"))
-            {
-                Console.WriteLine("Loading data ...");
-                var s = new FileStream("students.txt",FileMode.Open);
-                var r = new StreamReader(s);
-                var D = r.ReadToEnd(); var i = D.Split(',');
+            else if (args[0].Contains(Constants.FindEntry))
+			{ 
+				var word = fileContents.Split(',');
                 bool done = false;
                 var t = args[0].Substring(1);
-                for (int idx = 0; idx < i.Length && !done; idx++)
+                for (int idx = 0; idx < word.Length && !done; idx++)
                 {
-                    if (i[idx] == t)
+                    if (word[idx] == t)
                         Console.WriteLine("We found it!");
                         done = true;
                 }
             }
-            else if (args[0].Contains("c"))
-            {
-                Console.WriteLine("Loading data ...");
-                var s = new FileStream("students.txt",FileMode.Open);
-                var r = new StreamReader(s);
-                var D = r.ReadToEnd();
-                var a = D.ToCharArray();
+            else if (args[0].Contains(Constants.ShowCount))
+			{ 
+                var character = fileContents.ToCharArray();
                 var in_word = false;
-                var count = 0;
-                foreach(var c in a)
-                {
-                    if (c > ' ' && c < 0177)
-                    {
-                        if (!in_word) 
-						{
-                            count = count + 1;
-                            in_word = true;
-                        }
-                    }
-                    else {
-                        in_word = false;
-                    }
-                }
-                Console.WriteLine(String.Format("{0} words found", count));
-            }
-        }
+				var count = 0;
+				Console.WriteLine(String.Format("{0} words found", count));
+			}
+		
+		}
+		static string LoadData(string fileName)
+       {
+          string line;
+
+			// The 'using' construct does the heavy lifting of flushing a stream
+			// and releasing system resources the stream was using.
+			using (var fileStream = new FileStream(fileName, FileMode.Open))
+			using (var reader = new StreamReader(fileStream))
+			{
+
+				// The format of our student list is that it is two lines.
+				// The first line is a comma-separated list of student names. 
+				// The second line is a timestamp. 
+				// Let's just retrieve the first line, which is the student names. 
+				line = reader.ReadLine();
+			}
+
+				return line;
+		}
+
+
+		// Writes the given string of data to the file with the given file name.
+		//This method also adds a timestamp to the end of the file. 
+		static void UpdateContent(string content, string fileName)
+		{
+			var now = DateTime.Now;
+			var timestamp = String.Format("List last updated on {0}", now);
+
+			// The 'using' construct does the heavy lifting of flushing a stream
+			// and releasing system resources the stream was using.
+			using (var fileStream = new FileStream(fileName, FileMode.Open))
+			using (var writer = new StreamWriter(fileStream))
+			{
+				writer.WriteLine(content);
+				writer.WriteLine(timestamp);
+			}
+		}
     }
 }
